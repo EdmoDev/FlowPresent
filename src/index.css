@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background-dark: #282828;
+    --background-card: #282828;
+    --background-glass: rgba(40, 40, 40, 0.95);
+    --text-primary: #FFFFFF;
+    --text-secondary: #A8A8A8;
+    --border-subtle: rgba(54, 54, 54, 0.7);
+    --glass-gradient: linear-gradient(180deg, rgba(40, 40, 40, 0.95) 0%, rgba(20, 20, 20, 0.95) 100%);
+    --glass-shadow: 0px 16px 24px -13px rgba(0, 0, 0, 0.5),
+                    0px 2.15px 0.5px -2px rgba(0, 0, 0, 0.25),
+                    0px 5px 1.5px -4px rgba(8, 8, 8, 0.2),
+                    0px 6px 4px -4px rgba(8, 8, 8, 0.16),
+                    0px 6px 13px rgba(8, 8, 8, 0.12),
+                    0px 24px 24px -16px rgba(8, 8, 8, 0.08),
+                    inset 2px 4px 16px rgba(253, 253, 253, 0.05);
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply relative bg-[#282828] rounded-[28px] border border-[var(--border-subtle)]
+           shadow-[var(--glass-shadow)] backdrop-blur-[20px] overflow-hidden;
+  }
+  
+  .glass-button {
+    @apply relative overflow-hidden rounded-[20px] border border-[var(--border-subtle)]
+           bg-[#282828] hover:bg-[#2C2D2D]
+           shadow-[0px_16px_24px_-13px_rgba(0,0,0,0.5),0px_2.15px_0.5px_-2px_rgba(0,0,0,0.25),0px_5px_1.5px_-4px_rgba(8,8,8,0.2),0px_6px_4px_-4px_rgba(8,8,8,0.16),0px_6px_13px_rgba(8,8,8,0.12),0px_24px_24px_-16px_rgba(8,8,8,0.08),inset_2px_4px_20px_rgba(253,253,253,0.05)]
+           transition-all duration-300 ease-out;
+  }
+
+  .glass-button:hover {
+    @apply border-[rgba(255,255,255,0.1)] bg-[#2C2D2D];
+  }
+
+  .glass-button:active {
+    @apply transform scale-[0.98] transition-transform duration-100;
+  }
+
+  .status-badge {
+    @apply px-3 py-1.5 rounded-md text-[10px] font-medium font-['JetBrains Mono'] leading-none;
+  }
+
+  .status-badge-blue {
+    @apply bg-[#2D68FF]/10 text-[#2D68FF] border border-[#2D68FF]/20;
+  }
+
+  .status-badge-green {
+    @apply bg-[#282828] text-[#00A656] border border-[rgba(0,166,86,0.15)];
+  }
+
+  .glass-input {
+    @apply bg-[var(--background-glass)] rounded-[12px] px-4 py-2 text-[12px] text-[#F1F1F1]
+           placeholder-[#A8A8A8] border border-[var(--border-subtle)]
+           focus:outline-none focus:ring-2 focus:ring-[#2D68FF]/50 focus:border-transparent
+           transition-all duration-200;
+  }
+
+  .glass-panel {
+    @apply relative bg-[#282828] 
+           rounded-[20px] overflow-hidden backdrop-blur-[16px]
+           shadow-[0px_6px_4px_-4px_rgba(8,8,8,0.16),0px_6px_13px_rgba(8,8,8,0.12),0px_24px_24px_-16px_rgba(8,8,8,0.08),inset_2px_4px_16px_rgba(253,253,253,0.05)];
+  }
+
+  .glass-panel::before {
+    @apply content-[''] absolute inset-0 bg-[var(--glass-gradient)]
+           rounded-[20px] z-[-1] opacity-50;
+  }
+
+  .glass-header {
+    @apply absolute inset-x-0 top-0 h-[38px]
+           bg-[rgba(253,253,253,0.025)]
+           border-b border-[rgba(54,54,54,0.7)]
+           rounded-t-[20px];
+  }
+
+  .glass-bubble {
+    @apply absolute w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#454545] to-[#1A1A1A] opacity-50;
+  }
+
+  .glass-text {
+    @apply font-['Rubik'] text-[12px] leading-none tracking-[-0.02em] text-[#F1F1F1];
+  }
+
+  .glass-text-mono {
+    @apply font-['JetBrains Mono'] text-[10px] leading-none tracking-[-0.02em] text-[#A8A8A8];
+  }
+
+  @keyframes tooltip-fade {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translate(var(--tw-translate-x), var(--tw-translate-y));
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translate(var(--tw-translate-x), var(--tw-translate-y));
+    }
+  }
+
+  .glass-divider {
+    @apply w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent;
+  }
+
+  .glass-activity-item {
+    @apply flex items-center gap-3 px-4 py-3 hover:bg-white/[0.02] transition-colors;
+  }
+
+  .glass-icon {
+    @apply w-4 h-4 text-[#A8A8A8];
+  }
+
+  .glass-progress-bar {
+    @apply relative h-1 bg-[#2D68FF]/10 rounded-full overflow-hidden;
+  }
+
+  .glass-progress-fill {
+    @apply absolute inset-y-0 left-0 bg-[#2D68FF] rounded-full transition-all duration-500;
+  }
+}
