@@ -4,42 +4,125 @@
 
 @layer base {
   :root {
-    --background-dark: #282828;
+    /* MacOS-inspired variables - Dark mode */
+    --background-dark: #202020;
     --background-card: #282828;
-    --background-glass: rgba(40, 40, 40, 0.95);
+    --background-glass: rgba(38, 38, 38, 0.85);
+    --background-glass-rgb: 38, 38, 38;
+    --background-elevated: #323232;
     --text-primary: #FFFFFF;
-    --text-secondary: #A8A8A8;
+    --text-secondary: #9E9E9E;
+    --text-secondary-rgb: 158, 158, 158;
     --border-subtle: rgba(54, 54, 54, 0.7);
-    --glass-gradient: linear-gradient(180deg, rgba(40, 40, 40, 0.95) 0%, rgba(20, 20, 20, 0.95) 100%);
+    --glass-gradient: linear-gradient(180deg, rgba(253, 253, 253, 0.015) 0%, rgba(253, 253, 253, 0.05) 100%);
     --glass-shadow: 0px 16px 24px -13px rgba(0, 0, 0, 0.5),
-                    0px 2.15px 0.5px -2px rgba(0, 0, 0, 0.25),
-                    0px 5px 1.5px -4px rgba(8, 8, 8, 0.2),
-                    0px 6px 4px -4px rgba(8, 8, 8, 0.16),
-                    0px 6px 13px rgba(8, 8, 8, 0.12),
-                    0px 24px 24px -16px rgba(8, 8, 8, 0.08),
-                    inset 2px 4px 16px rgba(253, 253, 253, 0.05);
+                   0px 2.15px 0.5px -2px rgba(0, 0, 0, 0.25),
+                   0px 5px 1.5px -4px rgba(8, 8, 8, 0.2),
+                   0px 6px 4px -4px rgba(8, 8, 8, 0.16),
+                   0px 6px 13px rgba(8, 8, 8, 0.12),
+                   0px 24px 24px -16px rgba(8, 8, 8, 0.08),
+                   inset 2px 4px 16px rgba(253, 253, 253, 0.05);
+    --glass-blur: 16px;
+    --card-shadow: 0px 16px 24px -8px rgba(0, 0, 0, 0.2),
+                  0px 8px 32px -16px rgba(0, 0, 0, 0.1);
+    --accent-blue: #0A84FF;
+    --accent-purple: #BF5AF2;
+    --accent-green: #30D158;
+    --accent-orange: #FF9F0A;
+    --accent-red: #FF453A;
+    --sidebar-width: 240px;
+    --header-height: 48px;
+    --border-radius-sm: 6px;
+    --border-radius-md: 16px;
+    --border-radius-lg: 20px;
+    --border-radius-xl: 28px;
+    --border-radius-xxl: 32px;
+  }
+  
+  /* MacOS-inspired Light mode variables */
+  .light-mode {
+    --background-dark: #E9E9E9;
+    --background-card: #F1F1F1;
+    --background-glass: rgba(255, 255, 255, 0.85);
+    --background-glass-rgb: 255, 255, 255;
+    --background-elevated: #F9F9F9;
+    --text-primary: #000000;
+    --text-secondary: #727272;
+    --text-secondary-rgb: 114, 114, 114;
+    --border-subtle: rgba(168, 168, 168, 0.2);
+    --glass-gradient: linear-gradient(180deg, rgba(253, 253, 253, 0.225) 0%, rgba(253, 253, 253, 0.75) 100%);
+    --glass-shadow: 0px 32px 64px -12px rgba(0, 0, 0, 0.075),
+                   0px 2.15px 0.5px -2px rgba(0, 0, 0, 0.25),
+                   0px 24px 24px -16px rgba(8, 8, 8, 0.04),
+                   0px 6px 13px rgba(8, 8, 8, 0.03),
+                   0px 6px 4px -4px rgba(8, 8, 8, 0.05),
+                   0px 5px 1.5px -4px rgba(8, 8, 8, 0.05);
+    --glass-blur: 16px;
+    --card-shadow: 0px 16px 24px -8px rgba(0, 0, 0, 0.2),
+                  0px 8px 32px -16px rgba(0, 0, 0, 0.1);
+    --accent-blue: #007AFF;
+    --accent-purple: #AF52DE;
+    --accent-green: #34C759;
+    --accent-orange: #FF9500;
+    --accent-red: #FF3B30;
+  }
+  
+  /* Styles for native-like scrollbars */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-secondary) transparent;
+  }
+  
+  /* Setup base font sizes that match macOS */
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Adding fonts that match Apple's system font styles */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 500;
+  }
+  
+  /* Remove focus outlines for mouse users, keep for keyboard navigation */
+  *:focus:not(:focus-visible) {
+    outline: none;
+  }
+  
+  *:focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
   }
 }
 
 @layer components {
   .glass-card {
-    @apply relative bg-[#282828] rounded-[28px] border border-[var(--border-subtle)]
-           shadow-[var(--glass-shadow)] backdrop-blur-[20px] overflow-hidden;
+    @apply relative bg-background-card rounded-[var(--border-radius-xl)] border border-[var(--border-subtle)]
+           shadow-[var(--glass-shadow)] backdrop-blur-[var(--glass-blur)] overflow-hidden;
   }
   
   .glass-button {
-    @apply relative overflow-hidden rounded-[20px] border border-[var(--border-subtle)]
-           bg-[#282828] hover:bg-[#2C2D2D]
-           shadow-[0px_16px_24px_-13px_rgba(0,0,0,0.5),0px_2.15px_0.5px_-2px_rgba(0,0,0,0.25),0px_5px_1.5px_-4px_rgba(8,8,8,0.2),0px_6px_4px_-4px_rgba(8,8,8,0.16),0px_6px_13px_rgba(8,8,8,0.12),0px_24px_24px_-16px_rgba(8,8,8,0.08),inset_2px_4px_20px_rgba(253,253,253,0.05)]
-           transition-all duration-300 ease-out;
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--border-radius-lg);
+    border: 1.5px solid var(--border-subtle);
+    background: linear-gradient(180deg, rgba(235, 235, 235, 0.1) -27.27%, rgba(196, 196, 196, 0.15) 127.27%);
+    box-shadow: var(--glass-shadow);
+    transition: all 300ms ease-out;
   }
 
   .glass-button:hover {
-    @apply border-[rgba(255,255,255,0.1)] bg-[#2C2D2D];
+    background-color: rgba(var(--background-glass-rgb), 0.8);
+    border-color: var(--border-subtle);
   }
 
   .glass-button:active {
-    @apply transform scale-[0.98] transition-transform duration-100;
+    transform: scale(0.98);
+    transition: transform 100ms;
   }
 
   .status-badge {
@@ -47,48 +130,78 @@
   }
 
   .status-badge-blue {
-    @apply bg-[#2D68FF]/10 text-[#2D68FF] border border-[#2D68FF]/20;
+    background-color: rgba(45, 104, 255, 0.1);
+    color: #2D68FF;
+    border: 1px solid rgba(45, 104, 255, 0.2);
+    @apply rounded-md text-[10px] font-medium font-['JetBrains Mono'] leading-none px-3 py-1.5;
   }
 
   .status-badge-green {
-    @apply bg-[#282828] text-[#00A656] border border-[rgba(0,166,86,0.15)];
+    background-color: var(--background-card);
+    color: #00A656;
+    border: 1px solid rgba(0, 166, 86, 0.15);
+    @apply rounded-md text-[10px] font-medium font-['JetBrains Mono'] leading-none px-3 py-1.5;
   }
 
   .glass-input {
-    @apply bg-[var(--background-glass)] rounded-[12px] px-4 py-2 text-[12px] text-[#F1F1F1]
-           placeholder-[#A8A8A8] border border-[var(--border-subtle)]
-           focus:outline-none focus:ring-2 focus:ring-[#2D68FF]/50 focus:border-transparent
+    @apply bg-[var(--background-glass)] rounded-[12px] px-4 py-2 text-[12px] text-text-primary
+           placeholder-text-secondary border border-[var(--border-subtle)]
+           focus:outline-none focus:border-transparent
            transition-all duration-200;
+  }
+  
+  .glass-input:focus {
+    box-shadow: 0 0 0 2px rgba(45, 104, 255, 0.5);
   }
 
   .glass-panel {
-    @apply relative bg-[#282828] 
-           rounded-[20px] overflow-hidden backdrop-blur-[16px]
-           shadow-[0px_6px_4px_-4px_rgba(8,8,8,0.16),0px_6px_13px_rgba(8,8,8,0.12),0px_24px_24px_-16px_rgba(8,8,8,0.08),inset_2px_4px_16px_rgba(253,253,253,0.05)];
+    @apply relative bg-background-card 
+           rounded-[var(--border-radius-lg)] overflow-hidden backdrop-blur-[var(--glass-blur)]
+           shadow-[var(--glass-shadow)];
   }
 
+  /* Can't use CSS variables with arbitrary values in gradient */
   .glass-panel::before {
-    @apply content-[''] absolute inset-0 bg-[var(--glass-gradient)]
-           rounded-[20px] z-[-1] opacity-50;
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--glass-gradient);
+    border-radius: var(--border-radius-lg);
+    z-index: -1;
   }
 
   .glass-header {
-    @apply absolute inset-x-0 top-0 h-[38px]
-           bg-[rgba(253,253,253,0.025)]
-           border-b border-[rgba(54,54,54,0.7)]
-           rounded-t-[20px];
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 36px;
+    background-color: rgba(253, 253, 253, 0.025);
+    border-bottom: 1px solid var(--border-subtle);
+    border-top-left-radius: var(--border-radius-lg);
+    border-top-right-radius: var(--border-radius-lg);
   }
 
   .glass-bubble {
-    @apply absolute w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#454545] to-[#1A1A1A] opacity-50;
+    position: absolute;
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 9999px;
+    background-image: linear-gradient(to bottom right, #454545, #1A1A1A);
+    opacity: 0.5;
   }
 
   .glass-text {
-    @apply font-['Rubik'] text-[12px] leading-none tracking-[-0.02em] text-[#F1F1F1];
+    @apply font-['Rubik'] text-[12px] leading-none tracking-[-0.02em] text-text-primary;
   }
 
   .glass-text-mono {
-    @apply font-['JetBrains Mono'] text-[10px] leading-none tracking-[-0.02em] text-[#A8A8A8];
+    font-family: 'JetBrains Mono', monospace;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 8px;
+    line-height: 10px;
+    letter-spacing: -0.02em;
+    color: var(--text-secondary);
   }
 
   @keyframes tooltip-fade {
@@ -102,23 +215,113 @@
     }
   }
 
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideOutRight {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
   .glass-divider {
-    @apply w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent;
+    @apply w-full h-px;
+    background: linear-gradient(to right, transparent, rgba(var(--text-secondary-rgb), 0.1), transparent);
   }
 
   .glass-activity-item {
-    @apply flex items-center gap-3 px-4 py-3 hover:bg-white/[0.02] transition-colors;
+    @apply flex items-center gap-3 px-4 py-3 transition-colors;
+  }
+  
+  .glass-activity-item:hover {
+    background-color: rgba(var(--background-glass-rgb), 0.1);
   }
 
   .glass-icon {
-    @apply w-4 h-4 text-[#A8A8A8];
+    @apply w-4 h-4 text-text-secondary;
   }
 
   .glass-progress-bar {
-    @apply relative h-1 bg-[#2D68FF]/10 rounded-full overflow-hidden;
+    @apply relative h-1 rounded-full overflow-hidden;
+    background-color: rgba(45, 104, 255, 0.1);
   }
 
   .glass-progress-fill {
-    @apply absolute inset-y-0 left-0 bg-[#2D68FF] rounded-full transition-all duration-500;
+    @apply absolute inset-y-0 left-0 rounded-full transition-all duration-500;
+    background-color: #2D68FF;
+  }
+  
+  /* Add keyboard shortcut display */
+  .keyboard-shortcut {
+    @apply inline-flex items-center text-xs text-text-secondary ml-2;
+  }
+  
+  .keyboard-shortcut kbd {
+    @apply px-1.5 py-0.5 rounded border border-[var(--border-subtle)] font-mono;
+    background-color: rgba(var(--background-glass-rgb), 0.5);
+  }
+  
+  /* Add drag handles */
+  .drag-handle {
+    @apply cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-60;
+  }
+  
+  /* Scrollbar styling */
+  .custom-scrollbar::-webkit-scrollbar {
+    @apply w-2;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply rounded-full;
+    background-color: rgba(var(--text-secondary-rgb, 158, 158, 158), 0.2);
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(var(--text-secondary-rgb, 158, 158, 158), 0.3);
+  }
+  
+  /* Sticky headers for sections */
+  .sticky-header {
+    @apply sticky top-0 z-10 py-2 bg-background-card backdrop-blur-md;
   }
 }
