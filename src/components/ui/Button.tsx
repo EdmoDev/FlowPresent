@@ -1,55 +1,58 @@
-import React from 'react';
+import React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 
-type ButtonVariant = 'primary' | 'secondary' | 'glass' | 'outline';
-type ButtonSize = 'sm' | 'md' | 'lg';
+const buttonVariants = cva(
+  "relative inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default: "bg-neutral-800/50 text-white hover:bg-neutral-700/50 shine",
+        primary: "bg-blue-600 text-white hover:bg-blue-700 shine",
+        secondary: "bg-neutral-700/50 text-white hover:bg-neutral-600/50 shine",
+        outline:
+          "border border-white/20 bg-transparent hover:bg-white/5 text-white",
+        ghost: "bg-transparent hover:bg-white/5 text-white",
+        glass:
+          "border-[1.5px] border-white/20 bg-button-gradient backdrop-blur-glass shadow-glass transition-all duration-300 hover:bg-white/5",
+      },
+      size: {
+        xs: "h-7 px-2 text-xs",
+        sm: "h-8 px-3 text-xs",
+        default: "h-9 px-4 py-2",
+        lg: "h-10 px-8",
+        icon: "h-9 w-9",
+      },
+      rounded: {
+        default: "rounded-lg",
+        full: "rounded-full",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+      rounded: "default",
+    },
+  },
+);
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children: React.ReactNode;
-  variant?: ButtonVariant;
-  size?: ButtonSize;
-  icon?: React.ReactElement;
-  iconPosition?: 'left' | 'right';
-  fullWidth?: boolean;
-  className?: string;
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
 }
 
-const Button: React.FC<ButtonProps> = ({
-  children,
-  variant = 'primary',
-  size = 'md',
-  icon,
-  iconPosition = 'left',
-  fullWidth = false,
-  className = '',
-  ...props
-}) => {
-  const baseStyles = "inline-flex items-center justify-center font-medium transition-all rounded-[var(--border-radius-md)]";
-  
-  const variantStyles = {
-    primary: "bg-[#2D68FF] hover:bg-[#2D68FF]/90 text-white",
-    secondary: "bg-black/5 text-text-primary border border-[var(--border-subtle)] hover:bg-black/10",
-    glass: "border-[1.5px] border-[var(--border-subtle)] bg-button-gradient text-text-secondary hover:text-text-primary backdrop-blur-glass",
-    outline: "border border-[var(--border-subtle)] text-text-secondary hover:bg-black/5"
-  };
-  
-  const sizeStyles = {
-    sm: "text-xs px-3 py-1.5 gap-1.5 font-['JetBrains Mono'] tracking-[-0.02em]",
-    md: "text-sm px-4 py-2 gap-2 font-['JetBrains Mono'] tracking-[-0.02em]",
-    lg: "text-base px-5 py-2.5 gap-2.5 font-['JetBrains Mono'] tracking-[-0.02em]"
-  };
-  
-  const widthStyle = fullWidth ? "w-full" : "";
-  
-  return (
-    <button
-      className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${widthStyle} ${className}`}
-      {...props}
-    >
-      {icon && iconPosition === 'left' && <span className="flex-shrink-0">{icon}</span>}
-      {children}
-      {icon && iconPosition === 'right' && <span className="flex-shrink-0">{icon}</span>}
-    </button>
-  );
-};
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, rounded, asChild = false, ...props }, ref) => {
+    return (
+      <button
+        className={buttonVariants({ variant, size, rounded, className })}
+        ref={ref}
+        {...props}
+      />
+    );
+  },
+);
 
-export default Button;
+Button.displayName = "Button";
+
+export { Button, buttonVariants };

@@ -1,29 +1,22 @@
-import React from 'react';
-import { HelpCircle } from 'lucide-react';
-import { useUI } from '../../contexts/UIContext';
-import { Tooltip } from '../Tooltip';
+import React from "react";
+import { HelpCircle } from "lucide-react";
+import { useUI } from "../../contexts/UIContext";
 
-const HelpToggle: React.FC = () => {
+interface HelpToggleProps {
+  className?: string;
+}
+
+const HelpToggle: React.FC<HelpToggleProps> = ({ className }) => {
   const { helpMode, toggleHelpMode } = useUI();
 
   return (
-    <Tooltip 
-      content="Toggle help mode - when enabled, hover over items to see tooltips"
-      position="bottom"
-      alwaysShow={true}
+    <button
+      onClick={toggleHelpMode}
+      className={`p-1.5 rounded-md ${helpMode ? "bg-accent-blue/10 text-accent-blue" : "hover:bg-background-glass/10 text-text-secondary"} ${className || ""}`}
+      aria-label={helpMode ? "Disable help mode" : "Enable help mode"}
     >
-      <button
-        onClick={toggleHelpMode}
-        className={`p-1.5 rounded-full transition-colors ${
-          helpMode 
-            ? 'bg-blue-500 text-white' 
-            : 'glass-button text-text-secondary hover:text-blue-500'
-        }`}
-        aria-label="Toggle help mode"
-      >
-        <HelpCircle className="w-4 h-4" />
-      </button>
-    </Tooltip>
+      <HelpCircle className="w-4 h-4" />
+    </button>
   );
 };
 

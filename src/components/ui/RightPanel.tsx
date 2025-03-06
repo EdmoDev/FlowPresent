@@ -1,107 +1,76 @@
-import React from 'react';
-import { X } from 'lucide-react';
-import { useUI } from '../../contexts/UIContext';
-
-interface RightPanelContentProps {
-  type: string;
-}
-
-// This would be expanded with different panel content types
-const RightPanelContent: React.FC<RightPanelContentProps> = ({ type }) => {
-  switch (type) {
-    case 'slide-editor':
-      return (
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Slide Editor</h2>
-          <div className="space-y-2">
-            <label className="block text-sm text-text-secondary">Slide Title</label>
-            <input className="glass-input w-full" defaultValue="Amazing Grace" />
-          </div>
-          <div className="space-y-2">
-            <label className="block text-sm text-text-secondary">Content</label>
-            <textarea className="glass-input w-full h-32" defaultValue="How sweet the sound" />
-          </div>
-        </div>
-      );
-    case 'song-properties':
-      return (
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Song Properties</h2>
-          <div className="space-y-2">
-            <label className="block text-sm text-text-secondary">Song Title</label>
-            <input className="glass-input w-full" defaultValue="Amazing Grace" />
-          </div>
-          <div className="space-y-2">
-            <label className="block text-sm text-text-secondary">Key</label>
-            <select className="glass-input w-full">
-              <option>G Major</option>
-              <option>A Major</option>
-              <option>B Major</option>
-              <option>C Major</option>
-              <option>D Major</option>
-              <option>E Major</option>
-              <option>F Major</option>
-            </select>
-          </div>
-          <div className="space-y-2">
-            <label className="block text-sm text-text-secondary">BPM</label>
-            <input type="number" className="glass-input w-full" defaultValue="80" />
-          </div>
-        </div>
-      );
-    case 'timeline-item':
-      return (
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Timeline Item</h2>
-          <div className="space-y-2">
-            <label className="block text-sm text-text-secondary">Item Name</label>
-            <input className="glass-input w-full" defaultValue="Worship Set" />
-          </div>
-          <div className="space-y-2">
-            <label className="block text-sm text-text-secondary">Duration</label>
-            <input className="glass-input w-full" defaultValue="20:00" />
-          </div>
-          <div className="space-y-2">
-            <label className="block text-sm text-text-secondary">Notes</label>
-            <textarea className="glass-input w-full h-32" />
-          </div>
-        </div>
-      );
-    default:
-      return (
-        <div>
-          <h2 className="text-xl font-semibold">Unknown Panel Type</h2>
-          <p>No content defined for panel type: {type}</p>
-        </div>
-      );
-  }
-};
+import React from "react";
+import { X } from "lucide-react";
+import { useUI } from "../../contexts/UIContext";
 
 const RightPanel: React.FC = () => {
   const { rightPanelOpen, rightPanelContent, closeRightPanel } = useUI();
 
-  if (!rightPanelOpen || !rightPanelContent) {
-    return null;
-  }
+  if (!rightPanelOpen) return null;
+
+  // Determine panel content based on rightPanelContent value
+  const renderPanelContent = () => {
+    switch (rightPanelContent) {
+      case "slide-editor":
+        return (
+          <div className="p-4">
+            <h2 className="text-lg font-medium text-text-primary mb-4">
+              Slide Editor
+            </h2>
+            <p className="text-text-secondary">Edit your slide content here.</p>
+            {/* Slide editor content would go here */}
+          </div>
+        );
+      case "timeline-item":
+        return (
+          <div className="p-4">
+            <h2 className="text-lg font-medium text-text-primary mb-4">
+              Timeline Item
+            </h2>
+            <p className="text-text-secondary">
+              Edit timeline item details here.
+            </p>
+            {/* Timeline item editor content would go here */}
+          </div>
+        );
+      default:
+        return (
+          <div className="p-4">
+            <h2 className="text-lg font-medium text-text-primary mb-4">
+              Details
+            </h2>
+            <p className="text-text-secondary">
+              Select an item to edit its details.
+            </p>
+          </div>
+        );
+    }
+  };
 
   return (
-    <div 
-      className="fixed right-0 top-0 bottom-0 w-80 glass-panel p-6 border-l border-[var(--border-subtle)] z-30"
-      style={{
-        animation: 'slideInRight 250ms ease-out forwards'
-      }}
-    >
-      <div className="flex items-center justify-between mb-6">
-        <button 
-          onClick={closeRightPanel}
-          className="p-2 glass-button rounded-full"
-          aria-label="Close panel"
-        >
-          <X className="w-4 h-4" />
-        </button>
+    <div className="fixed top-[var(--header-height)] right-0 bottom-0 w-[320px] bg-background-card border-l border-[var(--border-subtle)] shadow-lg z-30 animate-slideInRight">
+      <div className="h-full flex flex-col">
+        {/* Panel header */}
+        <div className="px-4 py-3 border-b border-[var(--border-subtle)] bg-background-elevated flex items-center justify-between">
+          <h3 className="text-base font-medium text-text-primary">
+            {rightPanelContent === "slide-editor"
+              ? "Slide Editor"
+              : rightPanelContent === "timeline-item"
+                ? "Timeline Item"
+                : "Details"}
+          </h3>
+          <button
+            className="p-1.5 rounded-md hover:bg-background-glass/10"
+            onClick={closeRightPanel}
+          >
+            <X className="w-4 h-4 text-text-secondary" />
+          </button>
+        </div>
+
+        {/* Panel content */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
+          {renderPanelContent()}
+        </div>
       </div>
-      
-      {rightPanelContent && <RightPanelContent type={rightPanelContent} />}
     </div>
   );
 };

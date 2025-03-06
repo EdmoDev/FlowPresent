@@ -1,51 +1,20 @@
-import React, { forwardRef } from 'react';
+import React from "react";
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
-  error?: string;
-  icon?: React.ReactElement;
-  fullWidth?: boolean;
-}
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {}
 
-const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, icon, fullWidth = false, className = '', ...props }, ref) => {
-    const baseStyles = "glass-input text-text-primary placeholder:text-text-secondary";
-    const errorStyles = error ? "border-red-500 focus:ring-red-500" : "";
-    const widthStyles = fullWidth ? "w-full" : "";
-    const combinedStyles = `${baseStyles} ${errorStyles} ${widthStyles} ${className}`;
-    
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, ...props }, ref) => {
     return (
-      <div className={fullWidth ? "w-full" : ""}>
-        {label && (
-          <label className="block text-sm font-medium text-text-primary mb-1.5">
-            {label}
-          </label>
-        )}
-        
-        <div className="relative">
-          {icon && (
-            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-              {React.cloneElement(icon, { 
-                className: `w-5 h-5 text-text-secondary ${icon.props.className || ''}`
-              })}
-            </div>
-          )}
-          
-          <input
-            ref={ref}
-            className={`${combinedStyles} ${icon ? 'pl-10' : ''}`}
-            {...props}
-          />
-        </div>
-        
-        {error && (
-          <p className="mt-1 text-xs text-red-500">{error}</p>
-        )}
-      </div>
+      <input
+        type={type}
+        className={`flex h-9 w-full rounded-md border border-white/10 bg-neutral-800/50 px-3 py-2 text-sm text-white shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/20 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+        ref={ref}
+        {...props}
+      />
     );
-  }
+  },
 );
+Input.displayName = "Input";
 
-Input.displayName = 'Input';
-
-export default Input;
+export { Input };

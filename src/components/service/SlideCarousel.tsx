@@ -1,7 +1,15 @@
-import React, { useState } from 'react';
-import { Play, ScrollText, ChevronLeft, ChevronRight, Edit2, Grid, Plus } from 'lucide-react';
-import { Tooltip } from '../Tooltip';
-import { useUI } from '../../contexts/UIContext';
+import React, { useState } from "react";
+import {
+  Play,
+  ScrollText,
+  ChevronLeft,
+  ChevronRight,
+  Edit2,
+  Grid,
+  Plus,
+} from "lucide-react";
+import { Tooltip } from "../Tooltip";
+import { useUI } from "../../contexts/UIContext";
 
 interface SlideProps {
   title: string;
@@ -9,31 +17,37 @@ interface SlideProps {
   onClick?: () => void;
 }
 
-const SlidePreview: React.FC<SlideProps> = ({ title, active = false, onClick }) => {
+const SlidePreview: React.FC<SlideProps> = ({
+  title,
+  active = false,
+  onClick,
+}) => {
   const { openRightPanel } = useUI();
   const [isHovering, setIsHovering] = useState(false);
-  
+
   const handleEditClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    openRightPanel('slide-editor');
+    openRightPanel("slide-editor");
   };
-  
+
   return (
-    <div 
-      className={`glass-card relative aspect-video overflow-hidden group cursor-pointer ${active ? 'ring-2 ring-blue-500' : ''}`}
+    <div
+      className={`glass-card relative aspect-video overflow-hidden group cursor-pointer ${active ? "ring-2 ring-blue-500" : ""}`}
       onClick={onClick}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900"></div>
       <div className="absolute inset-0 flex items-center justify-center p-4">
-        <p className="text-sm text-text-secondary text-center line-clamp-2">{title}</p>
+        <p className="text-sm text-text-secondary text-center line-clamp-2">
+          {title}
+        </p>
       </div>
-      
+
       {isHovering && (
         <div className="absolute top-2 right-2 z-10">
           <Tooltip content="Edit slide" position="top">
-            <button 
+            <button
               className="p-1 rounded-full bg-background-glass/80 border border-[var(--border-subtle)]"
               onClick={handleEditClick}
             >
@@ -42,7 +56,7 @@ const SlidePreview: React.FC<SlideProps> = ({ title, active = false, onClick }) 
           </Tooltip>
         </div>
       )}
-      
+
       <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
         <button className="glass-button p-1.5">
           <Play className="w-5 h-5 text-white" />
@@ -51,7 +65,7 @@ const SlidePreview: React.FC<SlideProps> = ({ title, active = false, onClick }) 
           <ScrollText className="w-5 h-5 text-white" />
         </button>
       </div>
-      
+
       {active && (
         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-blue-500"></div>
       )}
@@ -63,39 +77,39 @@ const SlideCarousel: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 3;
   const slides = [
-    'Amazing Grace',
-    'How Great Thou Art',
-    'It Is Well',
-    'Holy Spirit',
-    'Great Are You Lord',
-    'Who You Say I Am',
-    'Graves Into Gardens',
-    'Build My Life'
+    "Amazing Grace",
+    "How Great Thou Art",
+    "It Is Well",
+    "Holy Spirit",
+    "Great Are You Lord",
+    "Who You Say I Am",
+    "Graves Into Gardens",
+    "Build My Life",
   ];
-  
+
   const [activeSlide, setActiveSlide] = useState(0);
   const { openRightPanel } = useUI();
-  
+
   const goToNextPage = () => {
-    setCurrentPage(prev => Math.min(prev + 1, totalPages));
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
-  
+
   const goToPrevPage = () => {
-    setCurrentPage(prev => Math.max(prev - 1, 1));
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
-  
+
   const handleSlideClick = (index: number) => {
     setActiveSlide(index);
   };
-  
+
   const handleAddSlide = () => {
-    openRightPanel('slide-editor');
+    openRightPanel("slide-editor");
   };
-  
+
   // We can conditionally vary the number of columns based on screen size
   // For a real app this would be better handled with responsive Tailwind classes
   const gridCols = 4; // This could be dynamic based on screen width
-  
+
   return (
     <div className="relative">
       <div className="flex items-center justify-between mb-3">
@@ -107,17 +121,19 @@ const SlideCarousel: React.FC = () => {
             </button>
           </Tooltip>
         </div>
-        
+
         <div className="flex items-center gap-2">
-          <button 
+          <button
             className="p-1 glass-button"
             onClick={goToPrevPage}
             disabled={currentPage === 1}
           >
             <ChevronLeft className="w-4 h-4 text-text-secondary" />
           </button>
-          <span className="text-sm text-text-secondary">{currentPage} of {totalPages}</span>
-          <button 
+          <span className="text-sm text-text-secondary">
+            {currentPage} of {totalPages}
+          </span>
+          <button
             className="p-1 glass-button"
             onClick={goToNextPage}
             disabled={currentPage === totalPages}
@@ -126,7 +142,7 @@ const SlideCarousel: React.FC = () => {
           </button>
         </div>
       </div>
-      
+
       <div className={`grid grid-cols-${gridCols} gap-4`}>
         {slides.map((title, i) => (
           <div key={title}>
@@ -137,9 +153,9 @@ const SlideCarousel: React.FC = () => {
             />
           </div>
         ))}
-        
+
         {/* Add slide button */}
-        <button 
+        <button
           className="aspect-video glass-button flex flex-col items-center justify-center"
           onClick={handleAddSlide}
         >

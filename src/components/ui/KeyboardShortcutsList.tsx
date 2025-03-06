@@ -1,57 +1,97 @@
-import React from 'react';
+import React from "react";
 
-interface KeyboardShortcut {
-  key: string;
-  description: string;
-  category: string;
+interface ShortcutCategory {
+  name: string;
+  shortcuts: {
+    key: string;
+    description: string;
+  }[];
 }
 
-const shortcuts: KeyboardShortcut[] = [
-  { key: 'Space', description: 'Play/Pause current slide', category: 'Playback' },
-  { key: '→', description: 'Next slide', category: 'Navigation' },
-  { key: '←', description: 'Previous slide', category: 'Navigation' },
-  { key: 'Ctrl+N', description: 'New item', category: 'Timeline' },
-  { key: 'Ctrl+S', description: 'Save service', category: 'File' },
-  { key: 'Ctrl+O', description: 'Open service', category: 'File' },
-  { key: 'F1', description: 'Toggle help mode', category: 'Help' },
-  { key: 'F11', description: 'Toggle fullscreen', category: 'Display' },
-  { key: 'B', description: 'Black screen', category: 'Display' },
-  { key: 'W', description: 'White screen', category: 'Display' },
-  { key: 'Esc', description: 'Clear screen/Exit fullscreen', category: 'Display' },
-  { key: 'F5', description: 'Start presentation', category: 'Display' },
-  { key: 'Ctrl+Alt+P', description: 'Show/Hide presenter view', category: 'Display' },
-  { key: 'F2', description: 'Rename selected item', category: 'Timeline' },
-  { key: 'Delete', description: 'Delete selected item', category: 'Timeline' },
-  { key: 'Ctrl+Z', description: 'Undo', category: 'Edit' },
-  { key: 'Ctrl+Y', description: 'Redo', category: 'Edit' },
-  { key: 'Ctrl+D', description: 'Duplicate item', category: 'Timeline' },
-  { key: 'Ctrl+F', description: 'Find', category: 'Edit' },
-  { key: 'Ctrl+G', description: 'Group selected items', category: 'Timeline' },
+const shortcutCategories: ShortcutCategory[] = [
+  {
+    name: "General",
+    shortcuts: [
+      { key: "⌘S", description: "Save service" },
+      { key: "⌘Z", description: "Undo" },
+      { key: "⌘⇧Z", description: "Redo" },
+      { key: "⌘F", description: "Find" },
+      { key: "F1", description: "Show help" },
+      { key: "F11", description: "Toggle fullscreen" },
+      { key: "Esc", description: "Close dialog / Cancel action" },
+    ],
+  },
+  {
+    name: "Navigation",
+    shortcuts: [
+      { key: "⌘1", description: "Go to Service Plan" },
+      { key: "⌘2", description: "Go to Library" },
+      { key: "⌘3", description: "Go to Media" },
+      { key: "⌘4", description: "Go to Displays" },
+      { key: "⌘,", description: "Open Settings" },
+      { key: "⌘⇧B", description: "Toggle sidebar" },
+    ],
+  },
+  {
+    name: "Presentation",
+    shortcuts: [
+      { key: "F5", description: "Start/Stop presentation" },
+      { key: "Space", description: "Next slide" },
+      { key: "←", description: "Previous slide" },
+      { key: "→", description: "Next slide" },
+      { key: "B", description: "Black screen" },
+      { key: "W", description: "White screen" },
+      { key: "T", description: "Show/hide timer" },
+    ],
+  },
+  {
+    name: "Editing",
+    shortcuts: [
+      { key: "⌘A", description: "Select all" },
+      { key: "⌘C", description: "Copy" },
+      { key: "⌘X", description: "Cut" },
+      { key: "⌘V", description: "Paste" },
+      { key: "⌘D", description: "Duplicate" },
+      { key: "Delete", description: "Delete selected item" },
+      { key: "⌘G", description: "Group items" },
+      { key: "⌘⇧G", description: "Ungroup items" },
+    ],
+  },
+  {
+    name: "Bible",
+    shortcuts: [
+      { key: "⌘B", description: "Open Bible" },
+      { key: "⌘⇧F", description: "Bible search" },
+      { key: "⌘⇧V", description: "Add verse to presentation" },
+      { key: "⌘⇧B", description: "Add bookmark" },
+    ],
+  },
 ];
 
 const KeyboardShortcutsList: React.FC = () => {
-  // Group shortcuts by category
-  const categories = shortcuts.reduce((acc, shortcut) => {
-    if (!acc[shortcut.category]) {
-      acc[shortcut.category] = [];
-    }
-    acc[shortcut.category].push(shortcut);
-    return acc;
-  }, {} as Record<string, KeyboardShortcut[]>);
-
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-semibold mb-4">Keyboard Shortcuts</h2>
-      
-      <div className="space-y-6">
-        {Object.entries(categories).map(([category, categoryShortcuts]) => (
-          <div key={category}>
-            <h3 className="text-md font-medium text-blue-500 mb-2">{category}</h3>
-            <div className="space-y-1">
-              {categoryShortcuts.map((shortcut) => (
-                <div key={shortcut.key} className="flex justify-between py-1">
-                  <span className="text-text-primary">{shortcut.description}</span>
-                  <kbd className="px-2 py-0.5 rounded bg-background-glass text-xs font-mono text-text-secondary border border-[var(--border-subtle)]">
+    <div className="p-6 max-h-[600px] overflow-y-auto custom-scrollbar">
+      <h2 className="text-xl font-medium text-text-primary mb-6">
+        Keyboard Shortcuts
+      </h2>
+
+      <div className="space-y-8">
+        {shortcutCategories.map((category) => (
+          <div key={category.name}>
+            <h3 className="text-lg font-medium text-text-primary mb-3">
+              {category.name}
+            </h3>
+
+            <div className="space-y-2">
+              {category.shortcuts.map((shortcut) => (
+                <div
+                  key={shortcut.key}
+                  className="flex items-center justify-between py-2 border-b border-[var(--border-subtle)] last:border-0"
+                >
+                  <span className="text-text-primary">
+                    {shortcut.description}
+                  </span>
+                  <kbd className="px-2.5 py-1.5 bg-background-glass/20 border border-[var(--border-subtle)] rounded-md text-sm font-mono text-text-secondary">
                     {shortcut.key}
                   </kbd>
                 </div>
