@@ -12,7 +12,6 @@ import {
   Layers,
   ChevronDown,
   ChevronRight,
-  ChevronLeft,
   Music,
   Video,
   BookOpen,
@@ -28,577 +27,334 @@ import {
   Save,
   Rewind,
   FastForward,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Type,
+  Palette,
+  Grid,
+  Layout,
+  RefreshCw,
+  Maximize,
+  MinusCircle,
+  PlusCircle,
+  Tv2,
+  Laptop,
+  Mic,
+  Volume2,
+  SquareStack,
 } from "lucide-react";
-import { Button } from "../ui/Button";
-import { Card } from "../ui/Card";
-import { Input } from "../ui/Input";
-
-interface SlideItem {
-  id: string;
-  type: "song" | "scripture" | "video" | "image" | "announcement";
-  title: string;
-  content?: string;
-  thumbnail?: string;
-  selected?: boolean;
-}
-
-interface ServiceItem {
-  id: string;
-  title: string;
-  type: "song" | "scripture" | "video" | "image" | "announcement";
-  slides: SlideItem[];
-  expanded?: boolean;
-  selected?: boolean;
-}
 
 const WorshipPresenterLayout: React.FC = () => {
-  // State for different modes
-  const [activeMode, setActiveMode] = useState<"show" | "edit" | "reflow">(
-    "show",
-  );
-
-  // State for service items
-  const [serviceItems, setServiceItems] = useState<ServiceItem[]>([
-    {
-      id: "1",
-      title: "Good Grace",
-      type: "song",
-      expanded: true,
-      selected: true,
-      slides: [
-        { id: "1-1", type: "song", title: "Blank", selected: false },
-        { id: "1-2", type: "song", title: "Verse 1", selected: true },
-        { id: "1-3", type: "song", title: "Verse 2", selected: false },
-        { id: "1-4", type: "song", title: "Chorus 1", selected: false },
-        { id: "1-5", type: "song", title: "Bridge", selected: false },
-      ],
-    },
-    {
-      id: "2",
-      title: "Way Maker",
-      type: "song",
-      expanded: false,
-      selected: false,
-      slides: [
-        { id: "2-1", type: "song", title: "Blank", selected: false },
-        { id: "2-2", type: "song", title: "Verse 1", selected: false },
-        { id: "2-3", type: "song", title: "Chorus", selected: false },
-      ],
-    },
-    {
-      id: "3",
-      title: "John 3:16-21",
-      type: "scripture",
-      expanded: false,
-      selected: false,
-      slides: [
-        { id: "3-1", type: "scripture", title: "John 3:16", selected: false },
-        {
-          id: "3-2",
-          type: "scripture",
-          title: "John 3:17-18",
-          selected: false,
-        },
-        {
-          id: "3-3",
-          type: "scripture",
-          title: "John 3:19-21",
-          selected: false,
-        },
-      ],
-    },
-    {
-      id: "4",
-      title: "Welcome Video",
-      type: "video",
-      expanded: false,
-      selected: false,
-      slides: [
-        { id: "4-1", type: "video", title: "Welcome Video", selected: false },
-      ],
-    },
-  ]);
-
-  // State for the currently selected slide
-  const [currentSlide, setCurrentSlide] = useState<SlideItem | null>(
-    serviceItems[0].slides[1],
-  );
-
-  // State for the library section
-  const [librarySection, setLibrarySection] = useState<
-    "songs" | "bible" | "media"
-  >("songs");
-
-  // Toggle item expansion
-  const toggleItemExpansion = (itemId: string) => {
-    setServiceItems((items) =>
-      items.map((item) =>
-        item.id === itemId ? { ...item, expanded: !item.expanded } : item,
-      ),
-    );
-  };
-
-  // Select an item
-  const selectItem = (itemId: string) => {
-    setServiceItems((items) =>
-      items.map((item) => ({ ...item, selected: item.id === itemId })),
-    );
-  };
-
-  // Select a slide
-  const selectSlide = (itemId: string, slideId: string) => {
-    // Update the selected state in the service items
-    setServiceItems((items) =>
-      items.map((item) => ({
-        ...item,
-        slides: item.slides.map((slide) => ({
-          ...slide,
-          selected: item.id === itemId && slide.id === slideId,
-        })),
-      })),
-    );
-
-    // Find and set the current slide
-    const item = serviceItems.find((i) => i.id === itemId);
-    if (item) {
-      const slide = item.slides.find((s) => s.id === slideId);
-      if (slide) {
-        setCurrentSlide(slide);
-      }
-    }
-  };
-
-  // Get icon for item type
-  const getItemIcon = (type: string) => {
-    switch (type) {
-      case "song":
-        return <Music className="w-4 h-4 text-purple-400" />;
-      case "scripture":
-        return <BookOpen className="w-4 h-4 text-green-400" />;
-      case "video":
-        return <Video className="w-4 h-4 text-blue-400" />;
-      case "image":
-        return <ImageIcon className="w-4 h-4 text-amber-400" />;
-      case "announcement":
-        return <MessageSquare className="w-4 h-4 text-red-400" />;
-      default:
-        return <FileText className="w-4 h-4" />;
-    }
-  };
-
-  // Get background color for slide
-  const getSlideBackground = (type: string) => {
-    switch (type) {
-      case "song":
-        return "bg-purple-900/20";
-      case "scripture":
-        return "bg-green-900/20";
-      case "video":
-        return "bg-blue-900/20";
-      case "image":
-        return "bg-amber-900/20";
-      case "announcement":
-        return "bg-red-900/20";
-      default:
-        return "bg-neutral-800";
-    }
-  };
+  const [activeTab, setActiveTab] = useState("slides");
+  const [isPlaying, setIsPlaying] = useState(false);
 
   return (
     <div className="flex flex-col h-screen bg-neutral-900 text-white overflow-hidden">
       {/* Top toolbar */}
-      <div className="h-12 bg-neutral-800 border-b border-neutral-700 flex items-center px-2 justify-between">
-        {/* Left section - Mode switcher */}
-        <div className="flex items-center gap-1">
-          <Button
-            variant={activeMode === "show" ? "primary" : "ghost"}
-            size="sm"
-            onClick={() => setActiveMode("show")}
-            className="flex items-center gap-1.5"
-          >
-            <Play className="w-4 h-4" />
-            <span>Show</span>
-          </Button>
+      <div className="h-14 bg-neutral-800 border-b border-neutral-700 flex items-center justify-between px-4">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <Music className="w-5 h-5 text-purple-400" />
+            <span className="font-semibold">Worship Presenter</span>
+          </div>
 
-          <Button
-            variant={activeMode === "edit" ? "primary" : "ghost"}
-            size="sm"
-            onClick={() => setActiveMode("edit")}
-            className="flex items-center gap-1.5"
-          >
-            <Edit className="w-4 h-4" />
-            <span>Edit</span>
-          </Button>
+          <div className="h-6 w-px bg-neutral-700 mx-1"></div>
 
-          <Button
-            variant={activeMode === "reflow" ? "primary" : "ghost"}
-            size="sm"
-            onClick={() => setActiveMode("reflow")}
-            className="flex items-center gap-1.5"
-          >
-            <Layers className="w-4 h-4" />
-            <span>Reflow</span>
-          </Button>
+          <button className="px-3 py-1.5 bg-blue-600 text-white rounded-md flex items-center gap-1.5 hover:bg-blue-700">
+            <Play className="w-3.5 h-3.5" />
+            <span>Go Live</span>
+          </button>
         </div>
 
-        {/* Center section - Current item info */}
-        <div className="flex items-center">
-          <span className="text-sm font-medium">Good Grace • Verse 1</span>
-        </div>
-
-        {/* Right section - Output controls */}
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex items-center gap-1.5"
-          >
-            <Monitor className="w-4 h-4" />
-            <span>Outputs</span>
-          </Button>
-
-          <Button variant="ghost" size="icon" className="h-8 w-8">
+          <button className="p-2 text-neutral-400 hover:text-white rounded-md">
+            <Save className="w-4 h-4" />
+          </button>
+          <button className="p-2 text-neutral-400 hover:text-white rounded-md">
             <Settings className="w-4 h-4" />
-          </Button>
+          </button>
+          <button className="p-2 text-neutral-400 hover:text-white rounded-md">
+            <Monitor className="w-4 h-4" />
+          </button>
         </div>
       </div>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Left sidebar - Library/Playlist */}
-        <div className="w-64 border-r border-neutral-800 flex flex-col bg-neutral-800/50">
-          {/* Library/Playlist tabs */}
-          <div className="flex border-b border-neutral-800">
-            <button className="flex-1 py-2 text-sm font-medium text-white border-b-2 border-blue-500">
-              Playlist
-            </button>
-            <button className="flex-1 py-2 text-sm font-medium text-neutral-400 border-b-2 border-transparent hover:text-white">
-              Library
-            </button>
-          </div>
-
-          {/* Search */}
-          <div className="p-2 border-b border-neutral-800">
+        {/* Left sidebar - Library */}
+        <div className="w-64 border-r border-neutral-800 bg-neutral-800/50 flex flex-col">
+          <div className="p-3 border-b border-neutral-700">
             <div className="relative">
-              <Input
+              <input
                 type="text"
-                placeholder="Search playlist..."
-                className="pl-8 py-1 h-8 text-sm bg-neutral-700/50 border-neutral-600"
+                placeholder="Search library..."
+                className="w-full bg-neutral-700/50 border border-neutral-600 rounded-md pl-9 pr-3 py-2 text-sm"
               />
-              <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 text-neutral-500" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-500" />
             </div>
           </div>
 
-          {/* Service items list */}
           <div className="flex-1 overflow-y-auto">
-            {serviceItems.map((item) => (
-              <div key={item.id} className="border-b border-neutral-800/50">
-                {/* Item header */}
-                <div
-                  className={`flex items-center justify-between px-2 py-1.5 cursor-pointer ${item.selected ? "bg-blue-500/20" : "hover:bg-neutral-700/30"}`}
-                  onClick={() => selectItem(item.id)}
-                >
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      className="p-0.5 rounded hover:bg-neutral-700/50"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleItemExpansion(item.id);
-                      }}
-                    >
-                      {item.expanded ? (
-                        <ChevronDown className="w-3.5 h-3.5 text-neutral-400" />
-                      ) : (
-                        <ChevronRight className="w-3.5 h-3.5 text-neutral-400" />
-                      )}
-                    </button>
-                    {getItemIcon(item.type)}
-                    <span className="text-sm font-medium truncate">
-                      {item.title}
-                    </span>
+            <div className="p-2">
+              <div className="mb-4">
+                <h3 className="text-xs font-medium text-neutral-400 px-2 py-1 uppercase">
+                  Songs
+                </h3>
+                <div className="space-y-1">
+                  <div className="p-2 rounded-md hover:bg-neutral-700/50 cursor-pointer">
+                    <div className="flex items-center gap-2">
+                      <Music className="w-4 h-4 text-purple-400" />
+                      <span className="text-sm text-white">Amazing Grace</span>
+                    </div>
                   </div>
-
-                  <div className="flex items-center">
-                    <button className="p-1 rounded hover:bg-neutral-700/50">
-                      <MoreHorizontal className="w-3.5 h-3.5 text-neutral-400" />
-                    </button>
+                  <div className="p-2 rounded-md hover:bg-neutral-700/50 cursor-pointer">
+                    <div className="flex items-center gap-2">
+                      <Music className="w-4 h-4 text-purple-400" />
+                      <span className="text-sm text-white">
+                        How Great Is Our God
+                      </span>
+                    </div>
                   </div>
                 </div>
-
-                {/* Item slides */}
-                {item.expanded && (
-                  <div className="pl-6 pr-2 py-1 bg-neutral-800/30">
-                    {item.slides.map((slide) => (
-                      <div
-                        key={slide.id}
-                        className={`flex items-center justify-between px-2 py-1 rounded-sm cursor-pointer ${slide.selected ? "bg-blue-500/30" : "hover:bg-neutral-700/30"}`}
-                        onClick={() => selectSlide(item.id, slide.id)}
-                      >
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs font-medium">
-                            {slide.title}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
-            ))}
-          </div>
 
-          {/* Add item button */}
-          <div className="p-2 border-t border-neutral-800">
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full flex items-center justify-center gap-1.5"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Add Item</span>
-            </Button>
+              <div className="mb-4">
+                <h3 className="text-xs font-medium text-neutral-400 px-2 py-1 uppercase">
+                  Scripture
+                </h3>
+                <div className="space-y-1">
+                  <div className="p-2 rounded-md hover:bg-neutral-700/50 cursor-pointer">
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="w-4 h-4 text-green-400" />
+                      <span className="text-sm text-white">John 3:16-21</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <h3 className="text-xs font-medium text-neutral-400 px-2 py-1 uppercase">
+                  Media
+                </h3>
+                <div className="space-y-1">
+                  <div className="p-2 rounded-md hover:bg-neutral-700/50 cursor-pointer">
+                    <div className="flex items-center gap-2">
+                      <Video className="w-4 h-4 text-blue-400" />
+                      <span className="text-sm text-white">Welcome Video</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Main content area */}
         <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Preview area */}
-          <div className="flex-1 p-4 overflow-hidden">
-            <div className="h-full flex items-center justify-center">
-              <div className="relative w-full max-w-3xl aspect-video bg-black rounded-md overflow-hidden">
-                {/* Preview content */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center p-8 max-w-xl">
-                    <h2 className="text-3xl font-bold mb-4">
-                      People get ready
-                    </h2>
-                    <p className="text-xl">Jesus is coming soon</p>
-                    <p className="text-xl">
-                      To call from the corners of the earth
-                    </p>
-                  </div>
-                </div>
-
-                {/* Preview overlay - only in edit mode */}
-                {activeMode === "edit" && (
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <div className="text-center">
-                      <Button variant="primary" size="sm" className="mb-2">
-                        <Edit className="w-4 h-4 mr-1.5" />
-                        <span>Edit Content</span>
-                      </Button>
-                      <p className="text-xs text-neutral-400">
-                        Edit Mode Active
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+          {/* Tabs */}
+          <div className="flex items-center border-b border-neutral-700 bg-neutral-800/50">
+            <button
+              className={`px-4 py-3 text-sm font-medium ${activeTab === "slides" ? "text-white border-b-2 border-blue-500" : "text-neutral-400 hover:text-white"}`}
+              onClick={() => setActiveTab("slides")}
+            >
+              Slides
+            </button>
+            <button
+              className={`px-4 py-3 text-sm font-medium ${activeTab === "editor" ? "text-white border-b-2 border-blue-500" : "text-neutral-400 hover:text-white"}`}
+              onClick={() => setActiveTab("editor")}
+            >
+              Editor
+            </button>
+            <button
+              className={`px-4 py-3 text-sm font-medium ${activeTab === "settings" ? "text-white border-b-2 border-blue-500" : "text-neutral-400 hover:text-white"}`}
+              onClick={() => setActiveTab("settings")}
+            >
+              Settings
+            </button>
           </div>
 
-          {/* Controls area */}
-          <div className="h-20 border-t border-neutral-800 bg-neutral-800/80 backdrop-blur-sm p-2 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="h-10 w-10">
-                <SkipBack className="w-5 h-5" />
-              </Button>
-
-              <Button
-                variant="primary"
-                size="icon"
-                className="h-12 w-12 rounded-full"
-              >
-                <Play className="w-6 h-6" />
-              </Button>
-
-              <Button variant="ghost" size="icon" className="h-10 w-10">
-                <SkipForward className="w-5 h-5" />
-              </Button>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="flex flex-col items-center">
-                <span className="text-xs text-neutral-400">Previous</span>
-                <span className="text-sm font-medium truncate max-w-[120px]">
-                  Blank
-                </span>
+          {/* Preview area */}
+          <div className="flex-1 p-6 overflow-y-auto">
+            <div className="aspect-video bg-black rounded-lg overflow-hidden flex items-center justify-center relative">
+              <div className="text-center">
+                <h2 className="text-6xl font-bold mb-4">Amazing Grace</h2>
+                <p className="text-2xl">How sweet the sound</p>
               </div>
 
-              <div className="flex flex-col items-center">
-                <span className="text-xs text-neutral-400">Current</span>
-                <span className="text-sm font-medium text-blue-400 truncate max-w-[120px]">
-                  Verse 1
-                </span>
-              </div>
-
-              <div className="flex flex-col items-center">
-                <span className="text-xs text-neutral-400">Next</span>
-                <span className="text-sm font-medium truncate max-w-[120px]">
-                  Verse 2
-                </span>
+              {/* Overlay controls */}
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-2 bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full">
+                <button className="p-1.5 text-white/80 hover:text-white rounded-full">
+                  <SkipBack className="w-5 h-5" />
+                </button>
+                <button
+                  className="p-2 bg-white text-black rounded-full hover:bg-white/90"
+                  onClick={() => setIsPlaying(!isPlaying)}
+                >
+                  {isPlaying ? (
+                    <Pause className="w-5 h-5" />
+                  ) : (
+                    <Play className="w-5 h-5" />
+                  )}
+                </button>
+                <button className="p-1.5 text-white/80 hover:text-white rounded-full">
+                  <SkipForward className="w-5 h-5" />
+                </button>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="flex items-center gap-1.5"
-              >
-                <Eye className="w-4 h-4" />
-                <span>Preview</span>
-              </Button>
-
-              <Button
-                variant="ghost"
-                size="sm"
-                className="flex items-center gap-1.5"
-              >
-                <Save className="w-4 h-4" />
-                <span>Save</span>
-              </Button>
+            {/* Slides thumbnails */}
+            <div className="mt-6">
+              <h3 className="text-sm font-medium mb-3">Slides</h3>
+              <div className="grid grid-cols-6 gap-3">
+                {[1, 2, 3, 4, 5, 6].map((slide) => (
+                  <div
+                    key={slide}
+                    className={`aspect-video bg-neutral-800 rounded-md overflow-hidden flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-blue-500 ${slide === 1 ? "ring-2 ring-blue-500" : ""}`}
+                  >
+                    <span className="text-sm text-neutral-400">
+                      Slide {slide}
+                    </span>
+                  </div>
+                ))}
+                <div className="aspect-video border border-dashed border-neutral-600 rounded-md flex items-center justify-center cursor-pointer hover:bg-neutral-800/50">
+                  <Plus className="w-5 h-5 text-neutral-500" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Right sidebar - Editor/Properties */}
-        <div className="w-72 border-l border-neutral-800 flex flex-col bg-neutral-800/50">
-          {/* Editor tabs */}
-          <div className="flex border-b border-neutral-800">
-            <button className="flex-1 py-2 text-sm font-medium text-white border-b-2 border-blue-500">
-              Properties
-            </button>
-            <button className="flex-1 py-2 text-sm font-medium text-neutral-400 border-b-2 border-transparent hover:text-white">
-              Theme
+        {/* Right sidebar - Properties */}
+        <div className="w-72 border-l border-neutral-800 bg-neutral-800/50 flex flex-col">
+          <div className="p-3 border-b border-neutral-700 flex items-center justify-between">
+            <h3 className="text-sm font-medium">Properties</h3>
+            <button className="p-1 text-neutral-400 hover:text-white rounded-md">
+              <X className="w-4 h-4" />
             </button>
           </div>
 
-          {/* Properties content */}
           <div className="flex-1 overflow-y-auto p-4">
-            <div className="space-y-4">
+            <div className="space-y-6">
+              {/* Text properties */}
               <div>
-                <label className="block text-sm text-neutral-400 mb-1">
-                  Title
-                </label>
-                <Input
-                  type="text"
-                  value="Good Grace"
-                  className="bg-neutral-700/50 border-neutral-600"
-                />
-              </div>
+                <h4 className="text-xs font-medium text-neutral-400 mb-2 uppercase">
+                  Text
+                </h4>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs text-neutral-400 mb-1">
+                      Font
+                    </label>
+                    <select className="w-full bg-neutral-700 border border-neutral-600 rounded-md px-3 py-1.5 text-sm">
+                      <option>Arial</option>
+                      <option>Helvetica</option>
+                      <option>Times New Roman</option>
+                    </select>
+                  </div>
 
-              <div>
-                <label className="block text-sm text-neutral-400 mb-1">
-                  Type
-                </label>
-                <select className="w-full bg-neutral-700/50 border border-neutral-600 rounded-md px-3 py-1.5 text-sm text-white">
-                  <option value="song">Song</option>
-                  <option value="scripture">Scripture</option>
-                  <option value="video">Video</option>
-                  <option value="announcement">Announcement</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm text-neutral-400 mb-1">
-                  Background
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button variant="outline" size="sm" className="justify-start">
-                    <ImageIcon className="w-4 h-4 mr-1.5" />
-                    <span>Image</span>
-                  </Button>
-                  <Button variant="outline" size="sm" className="justify-start">
-                    <Video className="w-4 h-4 mr-1.5" />
-                    <span>Video</span>
-                  </Button>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm text-neutral-400 mb-1">
-                  Text Alignment
-                </label>
-                <div className="flex border border-neutral-600 rounded-md overflow-hidden">
-                  <button className="flex-1 py-1.5 bg-blue-500 text-white">
-                    Left
-                  </button>
-                  <button className="flex-1 py-1.5 bg-neutral-700 text-neutral-300 hover:bg-neutral-600">
-                    Center
-                  </button>
-                  <button className="flex-1 py-1.5 bg-neutral-700 text-neutral-300 hover:bg-neutral-600">
-                    Right
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm text-neutral-400 mb-1">
-                  Font Size
-                </label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="range"
-                    min="12"
-                    max="72"
-                    value="36"
-                    className="flex-1"
-                  />
-                  <span className="text-sm font-mono bg-neutral-700 px-2 py-1 rounded">
-                    36px
-                  </span>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm text-neutral-400 mb-1">
-                  Text Color
-                </label>
-                <div className="flex gap-2">
-                  <div className="w-8 h-8 rounded-md bg-white border border-neutral-600"></div>
-                  <Input
-                    type="text"
-                    value="#FFFFFF"
-                    className="bg-neutral-700/50 border-neutral-600"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm text-neutral-400 mb-1">
-                  Shadow
-                </label>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Enable text shadow</span>
-                  <div className="relative inline-flex items-center cursor-pointer">
+                  <div>
+                    <label className="block text-xs text-neutral-400 mb-1">
+                      Size
+                    </label>
                     <input
-                      type="checkbox"
-                      value=""
-                      className="sr-only peer"
-                      defaultChecked
+                      type="range"
+                      min="12"
+                      max="72"
+                      defaultValue="36"
+                      className="w-full"
                     />
-                    <div className="w-9 h-5 bg-neutral-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500"></div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs text-neutral-400 mb-1">
+                      Alignment
+                    </label>
+                    <div className="flex bg-neutral-700 rounded-md p-1">
+                      <button className="flex-1 p-1.5 rounded text-neutral-300 hover:bg-neutral-600 flex items-center justify-center">
+                        <AlignLeft className="w-4 h-4" />
+                      </button>
+                      <button className="flex-1 p-1.5 rounded bg-neutral-600 text-white flex items-center justify-center">
+                        <AlignCenter className="w-4 h-4" />
+                      </button>
+                      <button className="flex-1 p-1.5 rounded text-neutral-300 hover:bg-neutral-600 flex items-center justify-center">
+                        <AlignRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Background properties */}
+              <div>
+                <h4 className="text-xs font-medium text-neutral-400 mb-2 uppercase">
+                  Background
+                </h4>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs text-neutral-400 mb-1">
+                      Type
+                    </label>
+                    <select className="w-full bg-neutral-700 border border-neutral-600 rounded-md px-3 py-1.5 text-sm">
+                      <option>Solid Color</option>
+                      <option>Gradient</option>
+                      <option>Image</option>
+                      <option>Video</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs text-neutral-400 mb-1">
+                      Color
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 bg-black rounded-md border border-neutral-600"></div>
+                      <input
+                        type="text"
+                        value="#000000"
+                        className="flex-1 bg-neutral-700 border border-neutral-600 rounded-md px-3 py-1.5 text-sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Transition properties */}
+              <div>
+                <h4 className="text-xs font-medium text-neutral-400 mb-2 uppercase">
+                  Transition
+                </h4>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs text-neutral-400 mb-1">
+                      Type
+                    </label>
+                    <select className="w-full bg-neutral-700 border border-neutral-600 rounded-md px-3 py-1.5 text-sm">
+                      <option>None</option>
+                      <option>Fade</option>
+                      <option>Slide</option>
+                      <option>Zoom</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs text-neutral-400 mb-1">
+                      Duration
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="range"
+                        min="0"
+                        max="2"
+                        step="0.1"
+                        defaultValue="0.5"
+                        className="flex-1"
+                      />
+                      <span className="text-sm">0.5s</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Action buttons */}
-          <div className="p-3 border-t border-neutral-800 flex justify-between">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-red-400 hover:text-red-300"
-            >
-              <Trash2 className="w-4 h-4 mr-1.5" />
-              <span>Delete</span>
-            </Button>
-
-            <Button variant="primary" size="sm">
-              <Save className="w-4 h-4 mr-1.5" />
-              <span>Apply</span>
-            </Button>
           </div>
         </div>
       </div>
